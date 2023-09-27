@@ -1,0 +1,30 @@
+steps:
+    - name: 'gcr.io/cloud-builders/docker'
+      args: ['build', '-t', 'gcr.io/$PROJECT_ID/loriette-frontend', '.']
+
+    - name: 'gcr.io/cloud-builders/docker'
+      args: ['push', 'gcr.io/$PROJECT_ID/loriette-frontend']
+
+    - name: 'gcr.io/cloud-builders/gcloud'
+      entrypoint: gcloud
+      args:
+        - 'run'
+        - 'deploy'
+        - 'loriette-frontend'
+        - '--image'
+        - 'gcr.io/$PROJECT_ID/loriette-frontend'  # Corrected image URL
+        - '--region'
+        - 'us-central1'
+        - '--platform'
+        - 'managed'
+        - '--allow-unauthenticated'
+        - '--port'
+        - '80'
+        - '--concurrency'
+        - '10'
+        - '--memory'
+        - '1Gi'
+        - '--cpu'
+        - '1'
+options:
+  machineType: 'E2_HIGHCPU_8'
